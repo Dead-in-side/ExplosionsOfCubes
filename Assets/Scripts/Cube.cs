@@ -1,14 +1,16 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Renderer))]
 
 public class Cube : MonoBehaviour
 {
+    private static string s_colorShader = "_Color";
+
     private Renderer _renderer;
     private Color _color;
-    
-    public float ExploisionChance {  get; private set; }
+
+    public float ExploisionChance { get; private set; }
     public Rigidbody Rigidbody { get; private set; }
 
     private void Awake()
@@ -23,21 +25,23 @@ public class Cube : MonoBehaviour
         ChangeColor();
     }
 
-    public void DecreaseScale(float scaleFactor) => transform.localScale *= scaleFactor;
-
-    public void DecreaseChance(float parentChance, float chanceFactor) => ExploisionChance = parentChance * chanceFactor;
+    public void Initialize(float scaleFactor, float parentChanceOfExplosion, float chanceFactor)
+    {
+        transform.localScale *= scaleFactor;
+        ExploisionChance = parentChanceOfExplosion * chanceFactor;
+    }
 
     private void ChangeColor()
     {
-        int lowRandomLimit = 0;
-        int highRandomLimit = 1001;
+        float lowRandomLimit = 0;
+        float highRandomLimit = 1;
 
-        float rComponent = Convert.ToSingle(UsedTools.GetRandomNumber(lowRandomLimit, highRandomLimit)) / highRandomLimit;
-        float gComponent = Convert.ToSingle(UsedTools.GetRandomNumber(lowRandomLimit, highRandomLimit)) / highRandomLimit;
-        float bComponent = Convert.ToSingle(UsedTools.GetRandomNumber(lowRandomLimit, highRandomLimit)) / highRandomLimit;
+        float redComponent = Random.Range(lowRandomLimit, highRandomLimit);
+        float greenComponent = Random.Range(lowRandomLimit, highRandomLimit);
+        float blueComponent = Random.Range(lowRandomLimit, highRandomLimit);
 
-        _color = new Color(rComponent, gComponent, bComponent);
+        _color = new Color(redComponent, greenComponent, blueComponent);
 
-        _renderer.material.SetColor("_Color", _color);
+        _renderer.material.SetColor(s_colorShader, _color);
     }
 }

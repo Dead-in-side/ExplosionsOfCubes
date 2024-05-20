@@ -1,15 +1,19 @@
-using System;
 using UnityEngine;
+
+[RequireComponent(typeof(Cube))]
+[RequireComponent(typeof(Spawner))]
 
 public class Detonator : MonoBehaviour
 {
     [SerializeField] private float _explosionForce;
 
-    private Cube _cubePrefab;
+    private Spawner _spawner;
+    private Cube _cube;
 
     private void Start()
     {
-        _cubePrefab = GetComponent<Cube>();
+        _cube = GetComponent<Cube>();
+        _spawner = GetComponent<Spawner>();
     }
 
     private void OnMouseUpAsButton()
@@ -19,25 +23,14 @@ public class Detonator : MonoBehaviour
 
     private void Exploid()
     {
-        int lowRandomLimit = 2;
-        int highRandomLimit = 7;
         int lowChanseLimit = 0;
         int highChanseLimit = 101;
 
-        float chanceFactor = 0.5f;
-        float _scaleFactor = 0.5f;
-
-        if (UsedTools.GetRandomNumber(lowChanseLimit, highChanseLimit) <= _cubePrefab.ExploisionChance)
+        if (Random.Range(lowChanseLimit, highChanseLimit) <= _cube.ExploisionChance)
         {
-            for (int i = 0; i < UsedTools.GetRandomNumber(lowRandomLimit, highRandomLimit); i++)
+            foreach (Cube cube in _spawner.Spawn())
             {
-                Cube newCube = Instantiate(_cubePrefab);
-
-                newCube.DecreaseChance(_cubePrefab.ExploisionChance, chanceFactor);
-
-                newCube.DecreaseScale(_scaleFactor);
-
-                newCube.Rigidbody.AddForce(Vector3.up * _explosionForce, ForceMode.Impulse) ;
+                cube.Rigidbody.AddForce(Vector3.up*_explosionForce);
             }
         }
 
