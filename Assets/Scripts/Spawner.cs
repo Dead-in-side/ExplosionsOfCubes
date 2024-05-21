@@ -23,12 +23,15 @@ public class Spawner : MonoBehaviour
 
         float chanceFactor = 0.5f;
         float scaleFactor = 0.5f;
+        float explosionFactor = 2f;
 
         for (int i = 0; i < numberOfCubes; i++)
         {
             Cube newCube = Instantiate(_cubePrefab);
 
             newCube.Initialize(scaleFactor, _cubePrefab.ExploisionChance, chanceFactor);
+
+            newCube.SetExplosionOptions(_cubePrefab.ExplosionForce,_cubePrefab.ExplosionRadius, explosionFactor);
 
             _cubeList.Add(newCube);
         }

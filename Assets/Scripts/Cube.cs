@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Cube : MonoBehaviour
 {
-    private static string s_colorShader = "_Color";
+    private const string ColorShader = "_Color";
 
     private Renderer _renderer;
     private Color _color;
@@ -13,11 +13,16 @@ public class Cube : MonoBehaviour
     public float ExploisionChance { get; private set; }
     public Rigidbody Rigidbody { get; private set; }
 
+    public float ExplosionForce {  get; private set; }
+    public float ExplosionRadius {  get; private set; }
+
     private void Awake()
     {
         ExploisionChance = 100f;
         _renderer = GetComponent<Renderer>();
         Rigidbody = GetComponent<Rigidbody>();
+        ExplosionForce = 400f;
+        ExplosionRadius = 2.0f;
     }
 
     private void Start()
@@ -31,6 +36,12 @@ public class Cube : MonoBehaviour
         ExploisionChance = parentChanceOfExplosion * chanceFactor;
     }
 
+    public void SetExplosionOptions(float parentExplosionForce, float parentExplosionRadius, float explosionFactor)
+    {
+        ExplosionForce = parentExplosionForce*explosionFactor;
+        ExplosionRadius = parentExplosionRadius*explosionFactor;
+    }
+
     private void ChangeColor()
     {
         float lowRandomLimit = 0;
@@ -42,6 +53,6 @@ public class Cube : MonoBehaviour
 
         _color = new Color(redComponent, greenComponent, blueComponent);
 
-        _renderer.material.SetColor(s_colorShader, _color);
+        _renderer.material.SetColor(ColorShader, _color);
     }
 }

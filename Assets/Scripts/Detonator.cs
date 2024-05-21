@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Cube))]
@@ -5,8 +6,6 @@ using UnityEngine;
 
 public class Detonator : MonoBehaviour
 {
-    [SerializeField] private float _explosionForce;
-
     private Spawner _spawner;
     private Cube _cube;
 
@@ -30,10 +29,34 @@ public class Detonator : MonoBehaviour
         {
             foreach (Cube cube in _spawner.Spawn())
             {
-                cube.Rigidbody.AddForce(Vector3.up*_explosionForce);
+                cube.Rigidbody.AddForce(Vector3.up * _cube.ExplosionForce);
+            }
+        }
+        else
+        {
+            foreach(Rigidbody explodableObject in GetExplodableObjects())
+            {
+                explodableObject.AddExplosionForce(_cube.ExplosionForce, transform.position, _cube.ExplosionRadius);
             }
         }
 
         Destroy(gameObject);
+    }
+
+    private List<Rigidbody> GetExplodableObjects()
+    {
+        List<Rigidbody> explodableObjects = new List<Rigidbody>();
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _cube.ExplosionRadius);
+
+        foreach (Collider collider in colliders)
+        {
+            if (collider.attachedRigidbody != null)
+            {
+                explodableObjects.Add(collider.attachedRigidbody);
+            }
+        }
+
+        return explodableObjects;
     }
 }
